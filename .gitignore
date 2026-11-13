@@ -1,0 +1,60 @@
+# Dependencies and build output
+node_modules/
+dist/
+release/
+coverage/
+*.tsbuildinfo
+
+# Test reports and caches
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+.cache/
+.npm-cache/
+.vite/
+.vitest/
+__pycache__/
+*.py[cod]
+
+# Local agent context and generated review evidence
+.codex/
+.agents/
+/.planning/
+/verification/
+/pour_lab_prompt.md
+
+# Hosting metadata, credentials and local configuration
+.vercel/
+.netlify/
+.env
+.env.*
+!.env.example
+.npmrc
+.git-credentials
+.netrc
+.pypirc
+.ssh/
+.aws/
+*.local
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_ed25519
+/pour-lab-backup-*.json
+
+# Editor, OS and debug files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
