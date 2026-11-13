@@ -8,9 +8,12 @@ A mobile-first pour-over coffee app for designing recipes and following precise,
 - Two to five pours with fractional units and automatic last-pour balancing.
 - Guided Brew Mode with manual pour progression and a pauseable timer.
 - Saved recipes, brew history, tasting notes and JSON backups.
+- Optional roast dates and profiles with colour-coded resting and brew-window guidance.
 - Light and dark themes, installable PWA support and offline brewing.
 
 The default recipe uses 15g coffee and 255g water. Its three pours add 75g, 120g and 60g, giving scale targets of **75g, 195g and 255g**.
+
+Roast guidance uses your local date. Light, medium light, medium, medium dark and dark roasts rest for 14, 12, 10, 7 and 5 days respectively. The status is grey while resting, green from the rest day, yellow at two calendar months after roasting and red at three calendar months. Month-end anniversaries use the last day of a shorter month. These are starting points for your own taste preferences. Roast details are optional and stay with recipes, brew history and backups.
 
 ## Run locally
 
