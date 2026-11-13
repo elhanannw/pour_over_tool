@@ -13,6 +13,7 @@ export interface Recipe {
   units: number[]
   roastDate?: string
   roastProfile?: RoastProfile
+  roasterNotes?: string
 }
 export const DEFAULT_RECIPE: Recipe = {
   name: 'Everyday balance',
@@ -112,7 +113,7 @@ export function isRecipe(value: unknown): value is Recipe {
   const keys = ['name', 'coffee', 'water', 'locked', 'autoBalance', 'units']
   if (
     !isRecord(value) ||
-    !hasOnlyKeys(value, [...keys, 'roastDate', 'roastProfile']) ||
+    !hasOnlyKeys(value, [...keys, 'roastDate', 'roastProfile', 'roasterNotes']) ||
     !hasOwnKeys(value, keys)
   )
     return false
@@ -120,6 +121,8 @@ export function isRecipe(value: unknown): value is Recipe {
   return (
     (!Object.prototype.hasOwnProperty.call(r, 'roastDate') || isRoastDate(r.roastDate)) &&
     (!Object.prototype.hasOwnProperty.call(r, 'roastProfile') || isRoastProfile(r.roastProfile)) &&
+    (!Object.prototype.hasOwnProperty.call(r, 'roasterNotes') ||
+      (typeof r.roasterNotes === 'string' && r.roasterNotes.length <= 500)) &&
     typeof r.name === 'string' &&
     r.name.trim().length > 0 &&
     r.name.length <= 100 &&

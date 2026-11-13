@@ -290,6 +290,22 @@ h1 em {
   margin-top: 20px;
   padding: 23px 24px;
 }
+.roaster-notes-field {
+  margin-top: 20px;
+}
+.roaster-notes {
+  margin: 16px 0;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.roaster-notes strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
 .brew-edit {
   margin: 20px 0;
   padding-top: 20px;

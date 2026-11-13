@@ -18,6 +18,7 @@ import { elapsed, formatTime, newClock, pauseClock, resumeClock } from '../lib/t
 import type { BrewRecord } from '../lib/storage'
 import { Toggle } from './Controls'
 import PourBar from './PourBar'
+import RoasterNotes from './RoasterNotes'
 
 interface WakeLockSentinel {
   release: () => Promise<void>
@@ -142,6 +143,7 @@ export default function Brew({
               </div>
             ))}
           </div>
+          <RoasterNotes notes={recipe.roasterNotes} />
           <label className="input-label" htmlFor="tasting-notes">
             Tasting notes
           </label>
