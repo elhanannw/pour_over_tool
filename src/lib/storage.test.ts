@@ -30,6 +30,32 @@ describe('local persistence and backups', () => {
     }
     expect(importBackup(exportBackup(library), emptyLibrary())).toEqual(library)
   })
+  it('retains optional roast metadata in the editor, recipes, history and backups', () => {
+    const recipe = {
+      ...DEFAULT_RECIPE,
+      roastDate: '2020-01-31',
+      roastProfile: 'medium-light' as const,
+    }
+    const entry = { ...saved, recipe }
+    const library = {
+      recipes: [entry],
+      brews: [{ ...entry, elapsed: 165000, notes: 'Honey', rating: 4 }],
+    }
+    writeEditor(recipe)
+    writeLibrary(library)
+    expect(readEditor()).toEqual(recipe)
+    expect(readLibrary()).toEqual(library)
+    expect(importBackup(exportBackup(library), emptyLibrary())).toEqual(library)
+  })
+  it('supports missing or independently optional roast fields in legacy and new backups', () => {
+    for (const metadata of [{}, { roastDate: '2020-01-31' }, { roastProfile: 'dark' as const }]) {
+      const recipe = { ...DEFAULT_RECIPE, ...metadata }
+      const library = { recipes: [{ ...saved, recipe }], brews: [] }
+      writeEditor(recipe)
+      expect(readEditor()).toEqual(recipe)
+      expect(importBackup(exportBackup(library), emptyLibrary())).toEqual(library)
+    }
+  })
   it('merges backups without duplicating repeated imports', () => {
     const library = { recipes: [saved], brews: [] }
     expect(importBackup(exportBackup(library), library).recipes).toHaveLength(1)

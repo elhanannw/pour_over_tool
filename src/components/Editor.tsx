@@ -30,6 +30,7 @@ import type { Recipe } from '../lib/recipe'
 import { NumberControl, RatioInput, Toggle } from './Controls'
 import PourBar from './PourBar'
 import Dripper from './Dripper'
+import RoastFields from './RoastFields'
 
 export default function Editor({
   recipe,
@@ -155,6 +156,7 @@ export default function Editor({
               </span>
             </div>
           </section>
+          <RoastFields recipe={recipe} setRecipe={setRecipe} />
           <section className="panel pour-section">
             <div className="section-heading">
               <div className="section-title">

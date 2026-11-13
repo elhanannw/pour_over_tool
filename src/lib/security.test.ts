@@ -34,6 +34,35 @@ describe('untrusted backup boundaries', () => {
     expect(validateLibrary(Object.create({ recipes: [], brews: [] }))).toBe(false)
     expect(isRecipe([])).toBe(false)
   })
+  it.each([
+    { roastDate: '2026-02-30' },
+    { roastDate: '9999-01-01' },
+    { roastDate: '<img src=x onerror=alert(1)>' },
+    { roastDate: { year: 2026 } },
+    { roastDate: null },
+    { roastDate: '' },
+    { roastProfile: '__proto__' },
+    { roastProfile: 'constructor' },
+    { roastProfile: '<script>alert(1)</script>' },
+    { roastProfile: ['light'] },
+    { roastProfile: null },
+    { roastProfile: '' },
+  ])('rejects invalid roast metadata atomically: %j', (metadata) => {
+    const existing = { recipes: [entry], brews: [] }
+    writeLibrary(existing)
+    const before = localStorage.getItem(LIBRARY_KEY)
+    const recipe = { ...DEFAULT_RECIPE, ...metadata }
+    const incoming = { ...backup(), recipes: [{ ...entry, recipe }] }
+    expect(isRecipe(recipe)).toBe(false)
+    expect(() => importBackup(JSON.stringify(incoming), existing)).toThrow(
+      'Invalid Pour Lab backup',
+    )
+    expect(() =>
+      writeLibrary({ ...existing, recipes: [{ ...entry, recipe }] } as typeof existing),
+    ).toThrow()
+    expect(localStorage.getItem(LIBRARY_KEY)).toBe(before)
+    expect(existing.recipes).toEqual([entry])
+  })
   it('retains script-like names and notes only as plain strings for React rendering', () => {
     const data = backup()
     data.recipes[0].recipe.name = '<img src=x onerror=alert(1)>'
