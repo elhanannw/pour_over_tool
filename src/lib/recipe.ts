@@ -1,5 +1,7 @@
 import Decimal from 'decimal.js'
 import { hasOnlyKeys, hasOwnKeys, isRecord } from './validation'
+import { isRoastDate, isRoastProfile } from './roast'
+import type { RoastProfile } from './roast'
 
 Decimal.set({ precision: 30 })
 export interface Recipe {
@@ -9,6 +11,8 @@ export interface Recipe {
   locked: boolean
   autoBalance: boolean
   units: number[]
+  roastDate?: string
+  roastProfile?: RoastProfile
 }
 export const DEFAULT_RECIPE: Recipe = {
   name: 'Everyday balance',
@@ -106,9 +110,16 @@ export function pours(r: Recipe) {
 }
 export function isRecipe(value: unknown): value is Recipe {
   const keys = ['name', 'coffee', 'water', 'locked', 'autoBalance', 'units']
-  if (!isRecord(value) || !hasOnlyKeys(value, keys) || !hasOwnKeys(value, keys)) return false
+  if (
+    !isRecord(value) ||
+    !hasOnlyKeys(value, [...keys, 'roastDate', 'roastProfile']) ||
+    !hasOwnKeys(value, keys)
+  )
+    return false
   const r = value
   return (
+    (!Object.prototype.hasOwnProperty.call(r, 'roastDate') || isRoastDate(r.roastDate)) &&
+    (!Object.prototype.hasOwnProperty.call(r, 'roastProfile') || isRoastProfile(r.roastProfile)) &&
     typeof r.name === 'string' &&
     r.name.trim().length > 0 &&
     r.name.length <= 100 &&
