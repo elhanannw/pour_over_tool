@@ -9,7 +9,9 @@ import {
   Star,
   Trash2,
 } from 'lucide-react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import type { BrewEdits } from '../lib/editBrew'
+import EditBrew from './EditBrew'
 import type { Library as LibraryData } from '../lib/storage'
 import { exportBackup } from '../lib/storage'
 import { fmt, totalUnits } from '../lib/recipe'
@@ -28,6 +30,7 @@ export default function Library({
   onDelete,
   onImport,
   onNew,
+  onEditBrew,
 }: {
   library: LibraryData
   tab: 'recipes' | 'history'
@@ -37,9 +40,11 @@ export default function Library({
   onDelete: (id: string, kind: 'recipes' | 'brews') => void
   onImport: (file: File) => void
   onNew: () => void
+  onEditBrew: (id: string, edits: BrewEdits) => boolean
 }) {
   const input = useRef<HTMLInputElement>(null)
   const today = useLocalDate()
+  const [editingId, setEditingId] = useState<string | null>(null)
   const exportData = () => {
     const url = URL.createObjectURL(new Blob([exportBackup(library)], { type: 'application/json' }))
     const link = document.createElement('a')
@@ -209,7 +214,20 @@ export default function Library({
               </p>
               <RoastSummary recipe={entry.recipe} today={today} />
               <PourBar recipe={entry.recipe} />
-              <p className="history-notes">{entry.notes || 'No tasting notes for this brew.'}</p>
+              {editingId === entry.id ? (
+                <EditBrew
+                  key={entry.id}
+                  brew={entry}
+                  onCancel={() => setEditingId(null)}
+                  onSave={(edits) => {
+                    const saved = onEditBrew(entry.id, edits)
+                    if (saved) setEditingId(null)
+                    return saved
+                  }}
+                />
+              ) : (
+                <p className="history-notes">{entry.notes || 'No tasting notes for this brew.'}</p>
+              )}
               <div className="history-bottom">
                 <span className="history-stars">
                   {entry.rating === null
@@ -218,6 +236,13 @@ export default function Library({
                         <Star key={i} size={14} fill="currentColor" />
                       ))}
                 </span>
+                <button
+                  className="text-button"
+                  onClick={() => setEditingId(entry.id)}
+                  disabled={editingId !== null}
+                >
+                  Edit brew
+                </button>
                 <button className="text-button" onClick={() => onLoad(entry.recipe)}>
                   Use this recipe
                   <ArrowRight size={15} />
