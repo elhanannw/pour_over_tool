@@ -29,6 +29,7 @@ import {
   writeLibrary,
 } from './lib/storage'
 import type { Library as LibraryData } from './lib/storage'
+import { editBrew } from './lib/editBrew'
 
 interface InstallPrompt extends Event {
   prompt: () => Promise<void>
@@ -287,6 +288,16 @@ export default function App() {
           <Library
             library={library}
             tab={tab}
+            onEditBrew={(id, edits) => {
+              try {
+                if (!persist(editBrew(libraryRef.current, id, edits))) return false
+                notify('Brew updated in your journal.')
+                return true
+              } catch (error) {
+                setError(error instanceof Error ? error.message : 'Unable to update this brew.')
+                return false
+              }
+            }}
             setTab={setTab}
             onLoad={loadRecipe}
             onNew={() => {
