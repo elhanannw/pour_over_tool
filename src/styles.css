@@ -286,6 +286,117 @@ h1 em {
 .recipe-basics {
   padding: 23px 24px 0;
 }
+.roast-section {
+  margin-top: 20px;
+  padding: 23px 24px;
+}
+.roast-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+.roast-fields > div,
+.roast-fields input,
+.roast-fields select {
+  min-width: 0;
+}
+.roast-summary {
+  margin: 14px 0;
+}
+.roast-section .roast-summary {
+  margin-bottom: 0;
+}
+.roast-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 16px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.roast-help,
+.roast-error {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.roast-help {
+  color: var(--muted);
+}
+.roast-error {
+  color: #a53d35;
+}
+.roast-status {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 12px;
+  margin-top: 10px;
+  padding: 13px 14px;
+  border-radius: 7px;
+  border-left: 3px solid currentColor;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.roast-status strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.roast-status-dot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+}
+.roast-status p {
+  grid-column: 1 / -1;
+}
+.roast-status--resting {
+  background: #edf0f2;
+  color: #565b60;
+}
+.roast-status--optimal {
+  background: #e9f2e8;
+  color: #255237;
+}
+.roast-status--yellow {
+  background: #fff4d2;
+  color: #6f4e0e;
+}
+.roast-status--red {
+  background: #fbe9e7;
+  color: #8b302d;
+}
+:root[data-theme='dark'] .roast-status--resting {
+  background: #34383c;
+  color: #c3c6c9;
+}
+:root[data-theme='dark'] .roast-status--optimal {
+  background: #25382c;
+  color: #bbd9c0;
+}
+:root[data-theme='dark'] .roast-status--yellow {
+  background: #3f3520;
+  color: #ecd294;
+}
+:root[data-theme='dark'] .roast-status--red {
+  background: #442b2b;
+  color: #efb5ae;
+}
+:root[data-theme='dark'] .roast-error {
+  color: #efb5ae;
+}
+@media (max-width: 480px) {
+  .roast-section {
+    padding: 20px 18px;
+  }
+  .roast-fields,
+  .roast-status {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 .section-heading,
 .section-title {
   display: flex;

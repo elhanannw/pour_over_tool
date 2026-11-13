@@ -16,6 +16,8 @@ import { fmt, totalUnits } from '../lib/recipe'
 import type { Recipe } from '../lib/recipe'
 import { formatTime } from '../lib/timer'
 import PourBar from './PourBar'
+import RoastSummary from './RoastSummary'
+import { useLocalDate } from '../lib/useLocalDate'
 
 export default function Library({
   library,
@@ -37,6 +39,7 @@ export default function Library({
   onNew: () => void
 }) {
   const input = useRef<HTMLInputElement>(null)
+  const today = useLocalDate()
   const exportData = () => {
     const url = URL.createObjectURL(new Blob([exportBackup(library)], { type: 'application/json' }))
     const link = document.createElement('a')
@@ -145,6 +148,7 @@ export default function Library({
                 {fmt(entry.recipe.coffee)}g coffee <span>·</span> {fmt(entry.recipe.water)}g water{' '}
                 <span>·</span> 1:{fmt(totalUnits(entry.recipe), 2)}
               </p>
+              <RoastSummary recipe={entry.recipe} today={today} />
               <PourBar recipe={entry.recipe} legend={false} />
               <div className="library-card-bottom">
                 <small>
@@ -203,6 +207,7 @@ export default function Library({
                 {fmt(entry.recipe.coffee)}g coffee · {fmt(entry.recipe.water)}g water · 1:
                 {fmt(totalUnits(entry.recipe), 2)} · {entry.recipe.units.length} pours
               </p>
+              <RoastSummary recipe={entry.recipe} today={today} />
               <PourBar recipe={entry.recipe} />
               <p className="history-notes">{entry.notes || 'No tasting notes for this brew.'}</p>
               <div className="history-bottom">
