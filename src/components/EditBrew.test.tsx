@@ -37,6 +37,29 @@ function openEditor(withSecond = false) {
 }
 
 describe('editing brew history', () => {
+  it.each(['tabs', 'navigation'])(
+    'retains all draft fields across library %s switches until saved',
+    (navigation) => {
+      openEditor()
+      fireEvent.change(screen.getByLabelText('Brew name'), { target: { value: 'Draft name' } })
+      fireEvent.change(screen.getByLabelText('Tasting notes'), { target: { value: 'Draft notes' } })
+      fireEvent.change(screen.getByLabelText('Coffee rating'), { target: { value: '5' } })
+      const role = navigation === 'tabs' ? 'tab' : 'button'
+      fireEvent.click(screen.getByRole(role, { name: /Saved recipes/ }))
+      expect(screen.queryByRole('form', { name: 'Edit recorded brew' })).not.toBeInTheDocument()
+      fireEvent.click(screen.getByRole(role, { name: /Brew history/ }))
+      expect(screen.getByLabelText('Brew name')).toHaveValue('Draft name')
+      expect(screen.getByLabelText('Tasting notes')).toHaveValue('Draft notes')
+      expect(screen.getByLabelText('Coffee rating')).toHaveValue('5')
+      expect(readLibrary().brews[0]).toMatchObject({ notes: 'Original notes', rating: 3 })
+      fireEvent.click(screen.getByRole('button', { name: 'Save changes' }))
+      expect(readLibrary().brews[0]).toMatchObject({
+        recipe: { name: 'Draft name' },
+        notes: 'Draft notes',
+        rating: 5,
+      })
+    },
+  )
   it('unlocks the remaining brew after deleting the edited brew', () => {
     openEditor(true)
     fireEvent.click(screen.getByRole('button', { name: `Delete brew ${DEFAULT_RECIPE.name}` }))

@@ -1,20 +1,19 @@
 import { useId, useState } from 'react'
-import type { BrewRecord } from '../lib/storage'
 import type { BrewEdits } from '../lib/editBrew'
 
 export default function EditBrew({
-  brew,
+  draft,
+  onChange,
   onSave,
   onCancel,
 }: {
-  brew: BrewRecord
+  draft: BrewEdits
+  onChange: (draft: BrewEdits) => void
   onSave: (edits: BrewEdits) => boolean
   onCancel: () => void
 }) {
   const id = useId()
-  const [name, setName] = useState(brew.recipe.name)
-  const [notes, setNotes] = useState(brew.notes)
-  const [rating, setRating] = useState(brew.rating)
+  const { name, notes, rating } = draft
   const [failed, setFailed] = useState(false)
   return (
     <form
@@ -42,7 +41,7 @@ export default function EditBrew({
         required
         maxLength={100}
         autoFocus
-        onChange={(event) => setName(event.target.value)}
+        onChange={(event) => onChange({ ...draft, name: event.target.value })}
       />
       <label className="input-label" htmlFor={`${id}-notes`}>
         Tasting notes
@@ -52,7 +51,7 @@ export default function EditBrew({
         rows={4}
         maxLength={10000}
         value={notes}
-        onChange={(event) => setNotes(event.target.value)}
+        onChange={(event) => onChange({ ...draft, notes: event.target.value })}
       />
       <label className="input-label" htmlFor={`${id}-rating`}>
         Coffee rating
@@ -61,7 +60,9 @@ export default function EditBrew({
         id={`${id}-rating`}
         className="text-input"
         value={rating ?? ''}
-        onChange={(event) => setRating(event.target.value ? Number(event.target.value) : null)}
+        onChange={(event) =>
+          onChange({ ...draft, rating: event.target.value ? Number(event.target.value) : null })
+        }
       >
         <option value="">Unrated</option>
         {[1, 2, 3, 4, 5].map((value) => (

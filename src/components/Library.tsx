@@ -44,10 +44,11 @@ export default function Library({
 }) {
   const input = useRef<HTMLInputElement>(null)
   const today = useLocalDate()
-  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editing, setEditing] = useState<{ id: string; draft: BrewEdits } | null>(null)
+  const editingId = editing?.id ?? null
   useEffect(() => {
     if (editingId !== null && !library.brews.some((brew) => brew.id === editingId)) {
-      setEditingId(null)
+      setEditing(null)
     }
   }, [editingId, library.brews])
   const exportData = () => {
@@ -219,14 +220,15 @@ export default function Library({
               </p>
               <RoastSummary recipe={entry.recipe} today={today} />
               <PourBar recipe={entry.recipe} />
-              {editingId === entry.id ? (
+              {editing?.id === entry.id ? (
                 <EditBrew
                   key={entry.id}
-                  brew={entry}
-                  onCancel={() => setEditingId(null)}
+                  draft={editing.draft}
+                  onChange={(draft) => setEditing({ id: entry.id, draft })}
+                  onCancel={() => setEditing(null)}
                   onSave={(edits) => {
                     const saved = onEditBrew(entry.id, edits)
-                    if (saved) setEditingId(null)
+                    if (saved) setEditing(null)
                     return saved
                   }}
                 />
@@ -243,7 +245,12 @@ export default function Library({
                 </span>
                 <button
                   className="text-button"
-                  onClick={() => setEditingId(entry.id)}
+                  onClick={() =>
+                    setEditing({
+                      id: entry.id,
+                      draft: { name: entry.recipe.name, notes: entry.notes, rating: entry.rating },
+                    })
+                  }
                   disabled={editingId !== null}
                 >
                   Edit brew
