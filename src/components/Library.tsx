@@ -9,7 +9,7 @@ import {
   Star,
   Trash2,
 } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { BrewEdits } from '../lib/editBrew'
 import EditBrew from './EditBrew'
 import type { Library as LibraryData } from '../lib/storage'
@@ -45,6 +45,11 @@ export default function Library({
   const input = useRef<HTMLInputElement>(null)
   const today = useLocalDate()
   const [editingId, setEditingId] = useState<string | null>(null)
+  useEffect(() => {
+    if (editingId !== null && !library.brews.some((brew) => brew.id === editingId)) {
+      setEditingId(null)
+    }
+  }, [editingId, library.brews])
   const exportData = () => {
     const url = URL.createObjectURL(new Blob([exportBackup(library)], { type: 'application/json' }))
     const link = document.createElement('a')

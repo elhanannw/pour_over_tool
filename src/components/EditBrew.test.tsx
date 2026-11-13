@@ -1,10 +1,10 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import App from '../App'
 import { DEFAULT_RECIPE } from '../lib/recipe'
 import { readLibrary, writeLibrary } from '../lib/storage'
 
-function openEditor() {
+function openEditor(withSecond = false) {
   writeLibrary({
     recipes: [],
     brews: [
@@ -16,14 +16,52 @@ function openEditor() {
         notes: 'Original notes',
         rating: 3,
       },
+      ...(withSecond
+        ? [
+            {
+              id: 'brew-2',
+              recipe: { ...DEFAULT_RECIPE, name: 'Second cup' },
+              createdAt: '2026-11-13T04:00:00Z',
+              elapsed: 120000,
+              notes: '',
+              rating: null,
+            },
+          ]
+        : []),
     ],
   })
   render(<App />)
   fireEvent.click(screen.getByRole('button', { name: 'Brew history' }))
-  fireEvent.click(screen.getByRole('button', { name: 'Edit brew' }))
+  const card = screen.getByRole('heading', { name: DEFAULT_RECIPE.name }).closest('article')!
+  fireEvent.click(within(card).getByRole('button', { name: 'Edit brew' }))
 }
 
 describe('editing brew history', () => {
+  it('unlocks the remaining brew after deleting the edited brew', () => {
+    openEditor(true)
+    fireEvent.click(screen.getByRole('button', { name: `Delete brew ${DEFAULT_RECIPE.name}` }))
+    expect(screen.queryByRole('form', { name: 'Edit recorded brew' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Edit brew' })).toBeEnabled()
+    fireEvent.click(screen.getByRole('button', { name: 'Edit brew' }))
+    expect(screen.getByLabelText('Brew name')).toHaveValue('Second cup')
+  })
+  it('preserves the draft when deleting the edited brew fails', () => {
+    openEditor(true)
+    fireEvent.change(screen.getByLabelText('Brew name'), { target: { value: 'Draft name' } })
+    fireEvent.change(screen.getByLabelText('Tasting notes'), { target: { value: 'Draft notes' } })
+    fireEvent.change(screen.getByLabelText('Coffee rating'), { target: { value: '5' } })
+    const storage = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('Storage full')
+    })
+    fireEvent.click(screen.getByRole('button', { name: `Delete brew ${DEFAULT_RECIPE.name}` }))
+    expect(readLibrary().brews).toHaveLength(2)
+    expect(screen.getByLabelText('Brew name')).toHaveValue('Draft name')
+    expect(screen.getByLabelText('Tasting notes')).toHaveValue('Draft notes')
+    expect(screen.getByLabelText('Coffee rating')).toHaveValue('5')
+    storage.mockRestore()
+    fireEvent.click(screen.getByRole('button', { name: `Delete brew ${DEFAULT_RECIPE.name}` }))
+    expect(screen.getByRole('button', { name: 'Edit brew' })).toBeEnabled()
+  })
   it('saves a new name, notes and rating without adding a record', () => {
     openEditor()
     fireEvent.change(screen.getByLabelText('Brew name'), { target: { value: 'Cooling cup' } })
