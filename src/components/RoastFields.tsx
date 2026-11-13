@@ -84,6 +84,30 @@ export default function RoastFields({
         </p>
       )}
       <RoastSummary recipe={recipe} today={today} />
+      <div className="roaster-notes-field">
+        <label className="input-label" htmlFor="roaster-notes">
+          Roaster flavour notes
+        </label>
+        <input
+          id="roaster-notes"
+          className="text-input"
+          type="text"
+          maxLength={500}
+          placeholder="e.g. Peach, honey and cocoa"
+          value={recipe.roasterNotes ?? ''}
+          aria-describedby="roaster-notes-help"
+          onChange={(event) => {
+            const next = { ...recipe }
+            if (event.target.value) next.roasterNotes = event.target.value
+            else delete next.roasterNotes
+            setRecipe(next)
+          }}
+        />
+        <p id="roaster-notes-help" className="roast-help">
+          Optional · suggested flavours from the roaster, up to 500 characters. Add your own tasting
+          notes after brewing.
+        </p>
+      </div>
     </section>
   )
 }

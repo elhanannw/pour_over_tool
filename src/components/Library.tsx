@@ -19,6 +19,7 @@ import type { Recipe } from '../lib/recipe'
 import { formatTime } from '../lib/timer'
 import PourBar from './PourBar'
 import RoastSummary from './RoastSummary'
+import RoasterNotes from './RoasterNotes'
 import { useLocalDate } from '../lib/useLocalDate'
 
 export default function Library({
@@ -160,6 +161,7 @@ export default function Library({
                 <span>·</span> 1:{fmt(totalUnits(entry.recipe), 2)}
               </p>
               <RoastSummary recipe={entry.recipe} today={today} />
+              <RoasterNotes notes={entry.recipe.roasterNotes} />
               <PourBar recipe={entry.recipe} legend={false} />
               <div className="library-card-bottom">
                 <small>
@@ -219,6 +221,7 @@ export default function Library({
                 {fmt(totalUnits(entry.recipe), 2)} · {entry.recipe.units.length} pours
               </p>
               <RoastSummary recipe={entry.recipe} today={today} />
+              <RoasterNotes notes={entry.recipe.roasterNotes} />
               <PourBar recipe={entry.recipe} />
               {editing?.id === entry.id ? (
                 <EditBrew
